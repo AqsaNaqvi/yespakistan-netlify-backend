@@ -1,4 +1,4 @@
-// netlify-backend/functions/submit-story.js
+// netlify-backend/functions/submit-story.js (Final and Complete Version)
 
 const nodemailer = require('nodemailer');
 const Busboy = require('busboy');
@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 const parseMultipartForm = (event) =>
     new Promise((resolve, reject) => {
         const busboy = Busboy({
-            headers: { 'content-type': event.headers['content-type'] }
+            headers: { 'content-type': event.headers['content-type'] || event.headers['Content-Type'] }
         });
         const fields = {};
         const files = {};
@@ -43,6 +43,20 @@ const parseMultipartForm = (event) =>
     });
 
 exports.handler = async (event) => {
+    const headers = {
+        'Access-Control-Allow-Origin': 'https://www.yespakistan.com',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    };
+
+    if (event.httpMethod === 'OPTIONS') {
+        return {
+            statusCode: 204,
+            headers,
+            body: '',
+        };
+    }
+
     try {
         const { fields, files } = await parseMultipartForm(event);
         const attachment = files.attachment;
@@ -74,13 +88,15 @@ exports.handler = async (event) => {
 
         return {
             statusCode: 200,
+            headers,
             body: JSON.stringify({ message: "Your story has been submitted successfully!" }),
         };
     } catch (error) {
         console.error("Error:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: 'Failed to process your request.' }),
+            headers,
+            body: JSON.stringify({ message: `Failed to process your request. Error: ${error.toString()}` }),
         };
     }
 };
