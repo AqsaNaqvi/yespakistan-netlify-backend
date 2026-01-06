@@ -149,7 +149,7 @@ const parseMultipartForm = (event) =>
 
 exports.handler = async (event) => {
     const headers = {
-        'Access-Control-Allow-Origin': '*', // Update with your actual domain if needed
+        'Access-Control-Allow-Origin': 'https://yespakistan.com', // Update with your actual domain if needed
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
     };
